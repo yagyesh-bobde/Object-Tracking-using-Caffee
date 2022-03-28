@@ -1,8 +1,8 @@
-exi
+import cv2
 import dlib
 from imutils import face_utils
 
-img = cv2.imread('img1.jpg')
+img = cv2.imread('object (1).png')
 
 #--------Model Path---------#
 proto_file = 'SSD_MobileNet_prototxt.txt'
@@ -28,8 +28,6 @@ scale = 0.007843
 #---------Load The Model--------#
 net = cv2.dnn.readNetFromCaffe(proto_file, model_file)
 
-#----Loading the image--------#
-img = cv2.resize(img, (720, 620))
 #------image preprocessing----#
 blob = cv2.dnn.blobFromImage(img,
                              scalefactor=scale,
@@ -43,7 +41,7 @@ results = net.forward()
 for i in range(results.shape[2]):
   
   	# confidence
-    confidence = results[0, 0, i, 2]  
+    confidence = round(results[0, 0, i, 2],2) 
     if confidence > 0.7:
       
       	# class id
@@ -61,12 +59,13 @@ for i in range(results.shape[2]):
                       (x1, y1),
                       (x2, y2),
                       (0, 200, 0), 2)
-        cv2.putText(img, f'{classNames[id]}:{confidence}',
+        cv2.putText(img, f'{classNames[id]}:{confidence*100}',
                     (x1+30, y1-30), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 
-                    1, (0, 0, 0), 1)
+                    cv2.FONT_HERSHEY_DUPLEX, 
+                    1, (255, 0, 0), 1)
     # print(results[0,0,i,:])
 
-
+img = cv2.resize(img, (640, 720))
 cv2.imshow('Image', img)
+# cv2.imwrite('output1.jpg',img) # Uncomment this line to save the output
 cv2.waitKey()
